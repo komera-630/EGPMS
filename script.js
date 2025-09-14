@@ -618,6 +618,31 @@ function loadUserManagement() {
 
 // Update dashboard statistics for all roles
 function updateDashboardStats() {
+        const today = new Date().toISOString().split('T')[0];
+    const validNotices = notices.filter(n => n.validUntil >= today);
+
+    // Citizen dashboard notices
+    const citizenNoticesContainer = document.getElementById('dashboardNotices');
+    if (citizenNoticesContainer) {
+        citizenNoticesContainer.innerHTML = validNotices.slice(0, 3).map(n => `
+            <div class="p-3 bg-blue-50 rounded-md">
+                <p class="font-medium">${n.title}</p>
+                <p class="text-xs text-gray-600">Valid Until: ${n.validUntil}</p>
+            </div>
+        `).join('');
+    }
+
+    // Staff dashboard notices
+    const staffNoticesContainer = document.getElementById('staffDashboardNotices');
+    if (staffNoticesContainer) {
+        staffNoticesContainer.innerHTML = validNotices.slice(0, 3).map(n => `
+            <div class="p-3 bg-green-50 rounded-md">
+                <p class="font-medium">${n.title}</p>
+                <p class="text-xs text-gray-600">Valid Until: ${n.validUntil}</p>
+            </div>
+        `).join('');
+    }
+
     if (currentUser.role === 'citizen') {
         const userApps = applications.filter(app => app.userId === currentUser.id);
         document.getElementById('userApplicationsCount').textContent = userApps.length;

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gram Panchayat Digital Portal v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50">
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="grid grid-cols-3 items-center">
+                <div></div>
+                <div class="flex items-center justify-center space-x-4">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-2xl">🏛️</span>
+                    </div>
+                    <div class="text-left">
+                        <h1 class="text-2xl font-bold">Gram Panchayat Digital Portal</h1>
+                        <p class="text-blue-100">Complete Citizen Services Platform v2.0</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 justify-end">
+                    <div id="userInfo" class="text-right hidden">
+                        <p class="font-medium" id="currentUserName">Guest</p>
+                        <p class="text-sm text-blue-200" id="currentUserRole">Not logged in</p>
+                    </div>
+                    <button onclick="logout()" id="logoutBtn" class="hidden bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition-colors">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gray-100">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="text-4xl mb-4">🏛️</div>
+                <h2 class="text-2xl font-bold text-gray-800">Login to Portal</h2>
+                <p class="text-gray-600">Access your Gram Panchayat services</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input type="text" id="loginUsername" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="loginPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Login As</label>
+                    <select id="loginRole" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="citizen">Citizen</option>
+                        <option value="staff">Staff Member</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition-colors">
+                    Login
+                </button>
+            </form>
+            
+            </div>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden">
+        <nav class="bg-white shadow-sm border-b">
+            <div class="container mx-auto px-6">
+                <div class="flex space-x-8">
+                    <div id="citizenNav" class="hidden flex space-x-8">
+                        <button onclick="showSection('dashboard')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Dashboard</button>
+                        <button onclick="showSection('applications')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">My Applications</button>
+                        <button onclick="showSection('complaints')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">My Complaints</button>
+                        <button onclick="showSection('notices')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Notices</button>
+                        <button onclick="showSection('profile')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Profile</button>
+                    </div>
+                    
+                    <div id="staffNav" class="hidden flex space-x-8">
+                        <button onclick="showSection('staff-dashboard')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Dashboard</button>
+                        <button onclick="showSection('review-applications')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Review Applications</button>
+                        <button onclick="showSection('manage-complaints')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Manage Complaints</button>
+                        <button onclick="showSection('notices')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">View Notices</button>
+                        <button onclick="showSection('post-notices')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Post Notices</button>
+                        <button onclick="showSection('user-profiles')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">User Profiles</button>
+                    </div>
+                    
+                    <div id="adminNav" class="hidden flex space-x-8">
+                        <button onclick="showSection('admin-dashboard')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Dashboard</button>
+                        <button onclick="showSection('user-management')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">User Management</button>
+                        <button onclick="showSection('notices')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">View Notices</button>
+                        <button onclick="showSection('post-notices')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Post Notices</button>
+                        <button onclick="showSection('all-applications')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">All Applications</button>
+                        <button onclick="showSection('reports')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">Reports</button>
+                        <button onclick="showSection('csv-management')" class="nav-btn py-4 px-2 border-b-2 border-transparent hover:border-blue-500 transition-colors">CSV Management</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container mx-auto px-6 py-8">
+            <section id="dashboard" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Citizen Dashboard</h2>
+                
+                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-blue-800 mb-2">My Applications</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="userApplicationsCount">0</p>
+                        <p class="text-sm text-blue-600">Total submitted</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-green-800 mb-2">Approved</h3>
+                        <p class="text-3xl font-bold text-green-600" id="userApprovedCount">0</p>
+                        <p class="text-sm text-green-600">Applications approved</p>
+                    </div>
+                    <div class="bg-yellow-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-yellow-800 mb-2">Pending</h3>
+                        <p class="text-3xl font-bold text-yellow-600" id="userPendingCount">0</p>
+                        <p class="text-sm text-yellow-600">Under review</p>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-purple-800 mb-2">Complaints</h3>
+                        <p class="text-3xl font-bold text-purple-600" id="userComplaintsCount">0</p>
+                        <p class="text-sm text-purple-600">Total complaints</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📢 Recent Notices</h3>
+                    <div id="dashboardNotices" class="space-y-3">
+                        </div>
+                    <div class="mt-4 text-center">
+                        <button onclick="showSection('notices')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            View All Notices →
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Submit New Application</h3>
+                        <form id="newApplicationForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Certificate Type</label>
+                                <select name="certificateType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    <option value="">Select Certificate</option>
+                                    <option value="income">Income Certificate</option>
+                                    <option value="caste">Caste Certificate</option>
+                                    <option value="domicile">Domicile Certificate</option>
+                                    <option value="birth">Birth Certificate</option>
+                                    <option value="death">Death Certificate</option>
+                                    <option value="marriage">Marriage Certificate</option>
+                                </select>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                    <input type="text" name="fullName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                    <input type="tel" name="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Purpose</label>
+                                <textarea name="purpose" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition-colors">
+                                Submit Application
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Submit Complaint</h3>
+                        <form id="newComplaintForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                                <input type="text" name="subject" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                                <select name="priority" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                <textarea name="description" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md transition-colors">
+                                Submit Complaint
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="applications" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">My Applications</h2>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Application ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userApplicationsTable" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="complaints" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">My Complaints</h2>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Complaint ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userComplaintsTable" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="notices" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Public Notices</h2>
+                
+                <div id="noticesList" class="space-y-4">
+                    </div>
+            </section>
+
+            <section id="profile" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">My Profile</h2>
+                
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Personal Information</h3>
+                            <form id="profileForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                    <input type="text" id="profileName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                                    <input type="text" id="profileUsername" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                    <input type="email" id="profileEmail" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                    <input type="tel" id="profilePhone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                                    <textarea id="profileAddress" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition-colors">
+                                    Update Profile
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Account Statistics</h3>
+                            <div class="space-y-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-medium text-blue-800">Total Applications</h4>
+                                    <p class="text-2xl font-bold text-blue-600" id="profileApplicationsCount">0</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-medium text-green-800">Approved Applications</h4>
+                                    <p class="text-2xl font-bold text-green-600" id="profileApprovedCount">0</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-medium text-yellow-800">Pending Applications</h4>
+                                    <p class="text-2xl font-bold text-yellow-600" id="profilePendingCount">0</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-medium text-purple-800">Total Complaints</h4>
+                                    <p class="text-2xl font-bold text-purple-600" id="profileComplaintsCount">0</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <h4 class="font-medium text-gray-800 mb-2">Recent Activity</h4>
+                                <div id="recentActivity" class="space-y-2 text-sm text-gray-600">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="staff-dashboard" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Staff Dashboard</h2>
+                
+                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-blue-800 mb-2">Pending Applications</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="staffPendingCount">0</p>
+                        <p class="text-sm text-blue-600">Need review</p>
+                    </div>
+                    <div class="bg-yellow-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-yellow-800 mb-2">Open Complaints</h3>
+                        <p class="text-3xl font-bold text-yellow-600" id="staffComplaintsCount">0</p>
+                        <p class="text-sm text-yellow-600">Need attention</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-green-800 mb-2">Processed Today</h3>
+                        <p class="text-3xl font-bold text-green-600" id="staffProcessedCount">0</p>
+                        <p class="text-sm text-green-600">Applications handled</p>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-purple-800 mb-2">Active Users</h3>
+                        <p class="text-3xl font-bold text-purple-600" id="staffUsersCount">0</p>
+                        <p class="text-sm text-purple-600">Registered citizens</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 mt-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📢 Recent Notices</h3>
+                    <div id="staffDashboardNotices" class="space-y-3">
+                        </div>
+                    <div class="mt-4 text-center">
+                        <button onclick="showSection('notices')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            View All Notices →
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="review-applications" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Review Applications</h2>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reviewApplicationsTable" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="manage-complaints" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Complaints</h2>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="manageComplaintsTable" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="post-notices" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Post New Notice</h2>
+                
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <form id="newNoticeForm" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Notice Title</label>
+                            <input type="text" name="title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <option value="general">General</option>
+                                <option value="urgent">Urgent</option>
+                                <option value="meeting">Meeting</option>
+                                <option value="scheme">Government Scheme</option>
+                                <option value="event">Event</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Notice Content</label>
+                            <textarea name="content" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="6" required></textarea>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Valid From</label>
+                                <input type="date" name="validFrom" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Valid Until</label>
+                                <input type="date" name="validUntil" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md transition-colors">
+                            Post Notice
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="user-profiles" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">User Profiles</h2>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applications</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Complaints</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userProfilesTable" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="admin-dashboard" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Administrator Dashboard</h2>
+                
+                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-blue-800 mb-2">Total Users</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="adminUsersCount">0</p>
+                        <p class="text-sm text-blue-600">Registered users</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-green-800 mb-2">Total Applications</h3>
+                        <p class="text-3xl font-bold text-green-600" id="adminApplicationsCount">0</p>
+                        <p class="text-sm text-green-600">All time</p>
+                    </div>
+                    <div class="bg-yellow-50 p-6 rounded-lg">
+                        <h3 class="font-semibent text-yellow-800 mb-2">Total Complaints</h3>
+                        <p class="text-3xl font-bold text-yellow-600" id="adminComplaintsCount">0</p>
+                        <p class="text-sm text-yellow-600">All time</p>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-purple-800 mb-2">Active Notices</h3>
+                        <p class="text-3xl font-bold text-purple-600" id="adminNoticesCount">0</p>
+                        <p class="text-sm text-purple-600">Currently active</p>
+                    </div>
+                </div>
+                 <div class="bg-white rounded-lg shadow-lg p-6 mt-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📢 Recent Notices</h3>
+                    <div id="adminDashboardNotices" class="space-y-3">
+                        </div>
+                    <div class="mt-4 text-center">
+                        <button onclick="showSection('notices')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            View All Notices →
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="user-management" class="section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">User Management</h2>
+                    <button onclick="showAddUserModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
+                        Add New User
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userManagementTable" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="all-applications" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">All Applications</h2>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Applicant</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allApplicationsTable" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="csv-management" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">CSV Data Management</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Export Data to CSV</h3>
+                        <div class="space-y-4">
+                            <button onclick="exportToCSV('users')" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition-colors">
+                                Export Users Data
+                            </button>
+                            <button onclick="exportToCSV('applications')" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md transition-colors">
+                                Export Applications Data
+                            </button>
+                            <button onclick="exportToCSV('complaints')" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-md transition-colors">
+                                Export Complaints Data
+                            </button>
+                            <button onclick="exportToCSV('notices')" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md transition-colors">
+                                Export Notices Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Import Data from CSV</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Data Type</label>
+                                <select id="importDataType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="users">Users</option>
+                                    <option value="applications">Applications</option>
+                                    <option value="complaints">Complaints</option>
+                                    <option value="notices">Notices</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Upload CSV File</label>
+                                <input type="file" id="csvFileInput" accept=".csv" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <button onclick="importFromCSV()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md transition-colors">
+                                Import CSV Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">CSV Templates & Format</h3>
+                        <div class="space-x-2">
+                            <button onclick="downloadTemplate('users')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                Download Users Template
+                            </button>
+                            <button onclick="downloadTemplate('applications')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                Download Applications Template
+                            </button>
+                            <button onclick="downloadTemplate('complaints')" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                Download Complaints Template
+                            </button>
+                            <button onclick="downloadTemplate('notices')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                Download Notices Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Users CSV Format:</h4>
+                            <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">id,name,username,password,role,email,phone,address
+1,John Doe,user1,password,citizen,john@email.com,9876543210,123 Main St
+2,Jane Smith,staff1,password,staff,jane@email.com,9876543211,456 Oak Ave</pre>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Applications CSV Format:</h4>
+                            <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">id,userId,certificateType,fullName,phone,purpose,status,submittedAt,trackingId
+1,1,income,John Doe,9876543210,Bank loan,pending,2024-01-15,APP001
+2,1,caste,John Doe,9876543210,College admission,approved,2024-01-16,APP002</pre>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Complaints CSV Format:</h4>
+                            <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">id,userId,subject,priority,description,status,submittedAt
+1,1,Water supply issue,high,No water for 3 days,pending,2024-01-15
+2,1,Road repair needed,medium,Potholes on main road,in-progress,2024-01-16</pre>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Notices CSV Format:</h4>
+                            <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">id,title,category,content,validFrom,validUntil,postedBy,postedAt
+1,Village Meeting,meeting,Monthly meeting on 25th,2024-01-20,2024-01-25,staff1,2024-01-15
+2,New Scheme Launch,scheme,PM Awas Yojana applications,2024-01-15,2024-02-15,staff1,2024-01-15</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="reports" class="section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">System Reports</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Generate Reports</h3>
+                        <div class="space-y-4">
+                            <button onclick="generateReport('applications')" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition-colors">
+                                Applications Report
+                            </button>
+                            <button onclick="generateReport('complaints')" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-md transition-colors">
+                                Complaints Report
+                            </button>
+                            <button onclick="generateReport('users')" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md transition-colors">
+                                Users Report
+                            </button>
+                            <button onclick="generateReport('performance')" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md transition-colors">
+                                Performance Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Statistics</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Applications This Month:</span>
+                                <span class="font-semibold" id="monthlyApplications">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Approval Rate:</span>
+                                <span class="font-semibold" id="approvalRate">0%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Average Processing Time:</span>
+                                <span class="font-semibold" id="avgProcessingTime">0 days</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Complaints Resolved:</span>
+                                <span class="font-semibold" id="resolvedComplaints">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="reportResults" class="hidden bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Report Results</h3>
+                    <div id="reportContent"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="addUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center modal">
+        <div class="bg-white rounded-lg p-8 w-full max-w-md animate-fade-in">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Add New User</h3>
+            <form id="addUserForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input type="text" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input type="text" name="username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                    <select name="role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="citizen">Citizen</option>
+                        <option value="staff">Staff</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <input type="tel" name="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="flex space-x-4">
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition-colors">
+                        Add User
+                    </button>
+                    <button type="button" onclick="hideAddUserModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-md transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="script.js" defer></script>
+</body>
+</html>

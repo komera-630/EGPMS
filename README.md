@@ -39,7 +39,3 @@ It provides role-based access for **citizens, staff, and administrators** with f
 - **Staff**: `staff1 / password`
 - **Admin**: `admin / password`
 
----
-
-## 📜 License
-This project is for **educational/demo purposes**.  
